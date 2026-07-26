@@ -52,3 +52,29 @@ jobs:
             -scheme CorridaCerta \
             -destination 'platform=iOS Simulator,name=${{ steps.sim.outputs.name }}' \
             | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Gerar arquivo .xcarchive (sem assinatura, para dispositivo real)
+        run: |
+          xcodebuild archive \
+            -project CorridaCerta.xcodeproj \
+            -scheme CorridaCerta \
+            -archivePath build/CorridaCerta.xcarchive \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Empacotar como .ipa
+        run: |
+          mkdir -p build/Payload
+          cp -R build/CorridaCerta.xcarchive/Products/Applications/CorridaCerta.app build/Payload/
+          cd build
+          zip -r CorridaCerta.ipa Payload
+          cd ..
+
+      - name: Disponibilizar o .ipa para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: CorridaCerta-ipa
+          path: build/CorridaCerta.ipa
+          retention-days: 14
