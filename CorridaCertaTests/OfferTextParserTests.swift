@@ -3,7 +3,7 @@ import XCTest
 
 final class OfferTextParserTests: XCTestCase {
 
-    func testParsesTypicalOfferText() {
+    func testParsesTypicalOfferText() throws {
         let text = """
         Nova oferta
         R$ 18,50
@@ -11,18 +11,17 @@ final class OfferTextParserTests: XCTestCase {
         5 min
         17 min
         """
-        let offer = OfferTextParser.parse(rawText: text)
+        let offer = try XCTUnwrap(OfferTextParser.parse(rawText: text))
 
-        XCTAssertNotNil(offer)
-        XCTAssertEqual(offer?.grossValue, 18.50, accuracy: 0.001)
-        XCTAssertEqual(offer?.distanceKm, 8.3, accuracy: 0.001)
+        XCTAssertEqual(offer.grossValue, 18.50, accuracy: 0.001)
+        XCTAssertEqual(offer.distanceKm, 8.3, accuracy: 0.001)
         // Soma dos dois trechos de tempo (até o passageiro + corrida): 5 + 17 = 22
-        XCTAssertEqual(offer?.durationMinutes, 22, accuracy: 0.001)
+        XCTAssertEqual(offer.durationMinutes, 22, accuracy: 0.001)
     }
 
-    func testHandlesValueWithThousandsSeparator() {
+    func testHandlesValueWithThousandsSeparator() throws {
         let text = "R$ 1.234,56\n12 km\n30 min"
-        let value = OfferTextParser.extractCurrencyValue(from: text)
+        let value = try XCTUnwrap(OfferTextParser.extractCurrencyValue(from: text))
         XCTAssertEqual(value, 1234.56, accuracy: 0.001)
     }
 
