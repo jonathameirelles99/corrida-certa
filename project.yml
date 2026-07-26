@@ -29,6 +29,8 @@ targets:
     platform: iOS
     sources:
       - path: CorridaCertaBroadcast
+      - path: CorridaCerta/Compartilhado
+        name: Compartilhado
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.corridacerta.app.broadcast
