@@ -8,6 +8,9 @@ struct CorridaCertaApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(settingsStore)
+                .onAppear {
+                    NotificationService.requestAuthorizationIfNeeded()
+                }
         }
     }
 }
