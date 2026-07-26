@@ -1,0 +1,42 @@
+name: CorridaCerta
+options:
+  bundleIdPrefix: com.corridacerta
+  deploymentTarget:
+    iOS: "16.6"
+
+targets:
+  CorridaCerta:
+    type: application
+    platform: iOS
+    sources:
+      - path: CorridaCerta
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.corridacerta.app
+        INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+    info:
+      path: CorridaCerta/Info.plist
+
+  CorridaCertaTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CorridaCertaTests
+    dependencies:
+      - target: CorridaCerta
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+
+schemes:
+  CorridaCerta:
+    build:
+      targets:
+        CorridaCerta: all
+        CorridaCertaTests: [test]
+    test:
+      targets:
+        - CorridaCertaTests
