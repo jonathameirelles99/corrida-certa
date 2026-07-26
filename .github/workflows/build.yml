@@ -45,9 +45,9 @@ jobs:
             -destination 'platform=iOS Simulator,name=${{ steps.sim.outputs.name }}' \
             | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Rodar os testes unitários
+      - name: Compilar os testes (sem instalar no simulador)
         run: |
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -project CorridaCerta.xcodeproj \
             -scheme CorridaCerta \
             -destination 'platform=iOS Simulator,name=${{ steps.sim.outputs.name }}' \
