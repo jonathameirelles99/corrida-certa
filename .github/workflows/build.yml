@@ -64,6 +64,27 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
 
+      - name: Conferir se o .app foi gerado corretamente
+        run: |
+          APP_PATH="build/CorridaCerta.xcarchive/Products/Applications/CorridaCerta.app"
+          echo "--- Conteúdo do .xcarchive ---"
+          find build/CorridaCerta.xcarchive -maxdepth 4
+          echo "--- Tamanho do .app ---"
+          du -sh "$APP_PATH"
+          echo "--- Verificando binário principal ---"
+          BIN_PATH="$APP_PATH/CorridaCerta"
+          if [ ! -f "$BIN_PATH" ]; then
+            echo "ERRO: binário principal não encontrado em $BIN_PATH"
+            exit 1
+          fi
+          file "$BIN_PATH"
+          BIN_SIZE=$(stat -f%z "$BIN_PATH")
+          echo "Tamanho do binário: $BIN_SIZE bytes"
+          if [ "$BIN_SIZE" -lt 100000 ]; then
+            echo "ERRO: binário suspeito de estar incompleto (menos de 100KB)."
+            exit 1
+          fi
+
       - name: Empacotar como .ipa
         run: |
           mkdir -p build/Payload
@@ -71,6 +92,9 @@ jobs:
           cd build
           zip -r CorridaCerta.ipa Payload
           cd ..
+          echo "--- Tamanho final do .ipa ---"
+          du -sh build/CorridaCerta.ipa
+          ls -la build/CorridaCerta.ipa
 
       - name: Disponibilizar o .ipa para download
         uses: actions/upload-artifact@v4
