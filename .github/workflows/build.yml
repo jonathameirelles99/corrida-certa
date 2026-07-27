@@ -84,7 +84,6 @@ jobs:
             CODE_SIGN_IDENTITY="CorridaCerta Local Signing" \
             DEVELOPMENT_TEAM="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
-            CODE_SIGN_ENTITLEMENTS="" \
             | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Reassinar com as entitlements reais (sem exigir provisioning profile)
@@ -120,25 +119,3 @@ jobs:
           echo "--- Verificando extensão embutida ---"
           EXT_PATH="$APP_PATH/PlugIns/CorridaCertaBroadcast.appex"
           if [ ! -d "$EXT_PATH" ]; then
-            echo "ERRO: extensão CorridaCertaBroadcast.appex não foi embutida em $EXT_PATH"
-            exit 1
-          fi
-          du -sh "$EXT_PATH"
-
-      - name: Empacotar como .ipa
-        run: |
-          mkdir -p build/Payload
-          cp -R build/CorridaCerta.xcarchive/Products/Applications/CorridaCerta.app build/Payload/
-          cd build
-          zip -r CorridaCerta.ipa Payload
-          cd ..
-          echo "--- Tamanho final do .ipa ---"
-          du -sh build/CorridaCerta.ipa
-          ls -la build/CorridaCerta.ipa
-
-      - name: Disponibilizar o .ipa para download
-        uses: actions/upload-artifact@v4
-        with:
-          name: CorridaCerta-ipa
-          path: build/CorridaCerta.ipa
-          retention-days: 14
