@@ -84,7 +84,24 @@ jobs:
             CODE_SIGN_IDENTITY="CorridaCerta Local Signing" \
             DEVELOPMENT_TEAM="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
+            CODE_SIGN_ENTITLEMENTS="" \
             | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Reassinar com as entitlements reais (sem exigir provisioning profile)
+        run: |
+          APP_PATH="build/CorridaCerta.xcarchive/Products/Applications/CorridaCerta.app"
+          EXT_PATH="$APP_PATH/PlugIns/CorridaCertaBroadcast.appex"
+
+          codesign --force --sign "CorridaCerta Local Signing" \
+            --entitlements CorridaCertaBroadcast/CorridaCertaBroadcast.entitlements \
+            "$EXT_PATH"
+
+          codesign --force --sign "CorridaCerta Local Signing" \
+            --entitlements CorridaCerta/CorridaCerta.entitlements \
+            "$APP_PATH"
+
+          echo "--- Verificando assinatura final ---"
+          codesign -dv --entitlements - "$APP_PATH"
 
       - name: Conferir se o .app e a extensão foram gerados corretamente
         run: |
